@@ -14,3 +14,6 @@ class CharRNN(nn.Module):
         self.rnn = nn.GRU(input_size=self.input_size,
                           hidden_size=self.hidden_size,
                           num_layers=self.num_layers)
+
+    def forward(self):
+        raise NotImplementedError
