@@ -36,7 +36,7 @@ class CharRNN(nn.Module):
         return torch.argmax(output), hidden
 
     def init_hidden(self, batch_size):
-        return torch.zeros([batch_size, self.n_layers, self.hidden_size])
+        return torch.zeros([batch_size, self.num_layers, self.hidden_size])
 
     def sample(self, in_sequence):
         hidden = self.init_hidden(1)
