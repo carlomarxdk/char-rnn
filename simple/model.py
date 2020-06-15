@@ -29,5 +29,28 @@ class CharRNN(nn.Module):
         output = self.decoder(output)
         return output, hidden
 
+    def predict(self, x, hidden=None):
+        if hidden is None:
+            hidden = self.init_hidden(1)
+        output, hidden = self.forward(x, hidden)
+        return torch.argmax(output), hidden
+
     def init_hidden(self, batch_size):
-        return torch.Variable(torch.zeros(batch_size, self.n_layers, self.hidden_size))
+        return torch.zeros([batch_size, self.n_layers, self.hidden_size])
+
+    def sample(self, in_sequence):
+        hidden = self.init_hidden(1)
+
+        out_sequence = list()
+
+        for char in in_sequence:
+            output, hidden = self.forward(char, hidden)
+            out_sequence.append(char)
+
+        # sample the sequence
+        for ii in range(10):
+            output, hidden = self.predict(output, hidden)
+            out_sequence.append(output)
+
+        return  out_sequence
+
