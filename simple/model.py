@@ -50,7 +50,7 @@ class CharRNN(nn.Module):
         # sample the sequence
         for ii in range(10):
             output, hidden = self.predict(output, hidden)
-            out_sequence.append(output)
+            out_sequence.append(output.data.numpy())
 
-        return  out_sequence
+        return out_sequence
 
