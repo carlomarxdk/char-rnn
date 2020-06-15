@@ -29,5 +29,5 @@ class CharRNN(nn.Module):
         output = self.decoder(output)
         return output, hidden
 
-    def init_hidden(self):
-        return torch.zeros(1, self.hidden_size)
+    def init_hidden(self, batch_size):
+        return torch.Variable(torch.zeros(batch_size, self.n_layers, self.hidden_size))
