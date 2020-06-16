@@ -20,7 +20,7 @@ class CharRNN(nn.Module):
 
         self.decoder = nn.Sequential(nn.Linear(in_features=self.hidden_size,
                                                out_features=self.output_size),
-                                     nn.LogSoftmax(dim=1))
+                                     nn.Softmax(dim=1))
 
     def forward(self, x, hidden):
         #batch_size = x.shape[0]
@@ -33,7 +33,7 @@ class CharRNN(nn.Module):
         if hidden is None:
             hidden = self.init_hidden(1)
         output, hidden = self.forward(x, hidden)
-        return torch.argmax(output), hidden
+        return output.topk(1)[1], hidden
 
     def init_hidden(self, batch_size):
         return torch.zeros([self.num_layers, batch_size, self.hidden_size])
@@ -42,14 +42,14 @@ class CharRNN(nn.Module):
         hidden = self.init_hidden(1)
 
         out_sequence = list()
-
+        output = 0
         for char in in_sequence:
-            output, hidden = self.predict(char.view(1, 1), hidden)
+            output, hidden = self.predict(char, hidden)
             out_sequence.append(char.data.numpy())
 
         # sample the sequence
-        for ii in range(10):
-            output, hidden = self.predict(output.view(1, 1), hidden)
+        for ii in range(32):
+            output, hidden = self.predict(output.unsqueeze(0), hidden)
             out_sequence.append(output.data.numpy())
 
         return out_sequence
