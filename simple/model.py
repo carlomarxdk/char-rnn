@@ -41,7 +41,6 @@ class CharRNN(nn.Module):
 
     def sample(self, in_sequence):
         hidden = self.init_hidden(1)
-
         out_sequence = list()
         output = 0
         for char in in_sequence:
@@ -54,4 +53,3 @@ class CharRNN(nn.Module):
             out_sequence.append(output.data.numpy())
 
         return out_sequence
-
