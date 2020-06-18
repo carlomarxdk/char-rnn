@@ -10,25 +10,24 @@ class CharRNN(nn.Module):
         self.num_layers = num_layers
         self.hidden_size = hidden_size
 
-        self.encoder = nn.Embedding(num_embeddings=self.output_size,
+        self.encoder = nn.Embedding(num_embeddings=self.output_size+1,
                                     embedding_dim=self.hidden_size,
-                                    padding_idx=-1)
+                                    padding_idx=self.output_size)
         self.rnn = nn.GRU(input_size=self.hidden_size,
                           hidden_size=self.hidden_size,
                           num_layers=self.num_layers,
                           batch_first=True,
-                          dropout=0.7)
+                          dropout=0.3)
 
         self.decoder = nn.Sequential(nn.Linear(in_features=self.hidden_size,
                                                out_features=self.output_size),
                                      nn.LogSoftmax(dim=1))
 
     def forward(self, x, hidden):
-        batch_size = x.shape[0]
-        sequence_length = x.shape[1]
         x = self.encoder(x)
         output, hidden = self.rnn(x, hidden)
-        output = self.decoder(output.reshape([batch_size * sequence_length, -1]))
+        output = output.contiguous().view([output.size()[0] * output.size()[1], -1])
+        output = self.decoder(output)
         return output, hidden
 
     def predict(self, x, hidden=None):
